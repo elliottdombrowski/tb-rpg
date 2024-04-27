@@ -2,26 +2,31 @@ extends Control
 
 signal textbox_closed
 
-@onready var actions_panel     : Panel           = $ActionsPanel
-@onready var textbox           : Panel           = $Textbox
-@onready var textbox_label     : Label           = $Textbox/Label
-@onready var textbox_ticker    : Label           = $Textbox/Ticker
-@onready var player_health_bar : ProgressBar     = $PlayerPanel/PlayerData/ProgressBar
-@onready var enemy_texture     : TextureRect     = $EnemyContainer/Enemy
-@onready var enemy_health_bar  : ProgressBar     = $EnemyContainer/ProgressBar
-@onready var animation         : AnimationPlayer = $AnimationPlayer
+@onready var actions_panel        : Panel           = $ActionsPanel
+@onready var textbox              : Panel           = $Textbox
+@onready var textbox_label        : Label           = $Textbox/Label
+@onready var textbox_ticker       : Label           = $Textbox/Ticker
+@onready var player_health_bar    : ProgressBar     = $PlayerPanel/PlayerData/ProgressBar
+@onready var enemy_texture        : TextureRect     = $EnemyContainer/Enemy
+@onready var enemy_health_bar     : ProgressBar     = $EnemyContainer/ProgressBar
+@onready var animation            : AnimationPlayer = $AnimationPlayer
 
-@export_range(0,1) var run_chance : float = 0.5
-@export            var enemy      : Resource = null
+@export_range(0,1) var run_chance : float           = 0.5
+@export            var enemy      : Resource        = null
 
-var current_player_health : int  = 0
-var current_enemy_health  : int  = 0
-var is_defending          : bool = false
+var current_player_health         : int             = 0
+var current_enemy_health          : int             = 0
+var is_defending                  : bool            = false
+
+const CRITICAL_HIT_MODIFIER       : float           = 1.5
 
 
 func _ready():
 	set_health(player_health_bar, PlayerStats.current_health_points, PlayerStats.max_health_points)
 	set_health(enemy_health_bar, enemy.health_points, enemy.health_points)
+	
+	# Make sure enemy has texture - this is the only value with a null default
+	if enemy_texture == null: return
 	enemy_texture.texture = enemy.texture
 	
 	# Initialize health values
@@ -31,7 +36,7 @@ func _ready():
 	textbox.hide()
 	actions_panel.hide()
 	
-	display_text("A wild %s appears!" % enemy.name.to_upper())
+	display_text("A wild %s appears!" % enemy.entity_name.to_upper())
 	
 	await textbox_closed
 	actions_panel.show()
@@ -44,34 +49,75 @@ func set_health(progress_bar: ProgressBar, health, max_health):
 
 
 func enemy_turn():
-	display_text("%s launches at you!" % enemy.name)
+	var attack_was_critical = Utils.dice_roll(enemy.crit_chance)
+	
+	display_text("%s launches at you!" % enemy.entity_name)
 	await textbox_closed
+	
+	var damage_dealt = await handle_attack(
+		enemy.entity_name,
+		PlayerStats.entity_name,
+		enemy.attack_damage,
+		enemy.crit_chance,
+		PlayerStats.defense,
+		PlayerStats.dodge_chance
+	)
+	
+	if damage_dealt == 0: 
+		actions_panel.show()
+		return # If player dodged
 	
 	if is_defending:
 		is_defending = false
-		animation.play("player_damaged_defending")
-		await animation.animation_finished
-		
-		display_text("You defended successfully!")
-		await textbox_closed
-	else:
-		display_text("%s did %d damage!" % [enemy.name, enemy.attack_damage])
-		await textbox_closed
-		
-		# Make sure to never let health drop below 0
-		current_player_health = max(0, current_player_health - enemy.attack_damage)
-		set_health(player_health_bar, current_player_health, PlayerStats.max_health_points)
-		
 		animation.play("player_damaged")
 		await animation.animation_finished
+	else:
+		animation.play("player_damaged_defending")
+		await animation.animation_finished
 	
+	# Make sure to never let health drop below 0
+	current_player_health = max(0, current_player_health - damage_dealt)
+	set_health(player_health_bar, current_player_health, PlayerStats.max_health_points)
 	actions_panel.show()
-
 
 func display_text(text):
 	actions_panel.hide()
 	textbox.show()
 	textbox_label.text = text
+
+
+func handle_attack(
+	attacking_entity_name,
+	defending_entity_name,
+	attacking_entity_attack_damage, 
+	attacking_entity_crit_chance,
+	defending_entity_defense,
+	defending_entity_dodge_chance
+):
+	var is_critical_hit  : bool = Utils.dice_roll(attacking_entity_crit_chance)
+	var is_attack_dodged : bool = Utils.dice_roll(defending_entity_dodge_chance)
+	var damage_dealt     : float  = 0.0
+	
+	# Just break early if the attack is misses.
+	if is_attack_dodged:
+		display_text("but %s rolled out of the way..." % defending_entity_name)
+		await textbox_closed
+		return round(damage_dealt)
+	
+	damage_dealt = attacking_entity_attack_damage
+	if is_critical_hit:
+		damage_dealt = damage_dealt * CRITICAL_HIT_MODIFIER
+		display_text("%s dealt a critical hit!" % attacking_entity_name)
+		await textbox_closed
+	if is_defending:
+		damage_dealt = max(0, damage_dealt / defending_entity_defense)
+		display_text("%s prepares defensively..." % defending_entity_name)
+		await textbox_closed
+	
+	display_text("%s did %d damage!" % [attacking_entity_name, round(damage_dealt)])
+	await textbox_closed
+	
+	return round(damage_dealt)
 
 
 func _input(event):
@@ -83,11 +129,22 @@ func _input(event):
 func _on_attack_pressed():
 	display_text("You swing your sword!")
 	await textbox_closed
-	display_text("You dealt %d damage!" % PlayerStats.attack_damage)
-	await textbox_closed
+	
+	var damage_dealt = await handle_attack(
+		PlayerStats.entity_name,
+		enemy.entity_name,
+		PlayerStats.attack_damage,
+		PlayerStats.crit_chance,
+		enemy.defense,
+		enemy.dodge_chance
+	)
+
+	if damage_dealt == 0:
+		enemy_turn()
+		return # If enemy dodged
 	
 	# Make sure to never let health drop below 0
-	current_enemy_health = max(0, current_enemy_health - PlayerStats.attack_damage)
+	current_enemy_health = max(0, current_enemy_health - damage_dealt)
 	set_health(enemy_health_bar, current_enemy_health, enemy.health_points)
 	
 	animation.play("enemy_damaged")
@@ -95,7 +152,7 @@ func _on_attack_pressed():
 	
 	# Check if enemy is dead
 	if current_enemy_health == 0:
-		display_text("%s was defeated!" % enemy.name)
+		display_text("%s was defeated!" % enemy.entity_name)
 		await textbox_closed
 		animation.play("enemy_defeated")
 		await animation.animation_finished

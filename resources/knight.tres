@@ -7,5 +7,10 @@
 script = ExtResource("1_7ru60")
 name = "Knight"
 texture = ExtResource("2_cflyo")
-health = 45
-damage = 15
+health_points = 250
+magic_points = 10
+attack_damage = 25
+attack_speed = 0.0
+crit_chance = 0.5
+dodge_chance = 0.5
+defense = 30

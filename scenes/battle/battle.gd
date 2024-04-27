@@ -49,8 +49,6 @@ func set_health(progress_bar: ProgressBar, health, max_health):
 
 
 func enemy_turn():
-	var attack_was_critical = Utils.dice_roll(enemy.crit_chance)
-	
 	display_text("%s launches at you!" % enemy.entity_name)
 	await textbox_closed
 	
@@ -78,7 +76,13 @@ func enemy_turn():
 	# Make sure to never let health drop below 0
 	current_player_health = max(0, current_player_health - damage_dealt)
 	set_health(player_health_bar, current_player_health, PlayerStats.max_health_points)
-	actions_panel.show()
+	
+	if current_player_health == 0:
+		display_text("%s were defeated in battle..." % PlayerStats.entity_name)
+		await textbox_closed
+		get_tree().change_scene_to_file("res://scenes/menus/game_over/game_over.tscn")
+	else:
+		actions_panel.show()
 
 func display_text(text):
 	actions_panel.hide()
@@ -171,7 +175,7 @@ func _on_defend_pressed():
 
 
 func _on_run_pressed():
-	if randf() > run_chance:
+	if Utils.dice_roll(run_chance):
 		display_text("Failed to run away!")
 		return
 

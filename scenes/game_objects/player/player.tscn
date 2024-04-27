@@ -1,5 +1,6 @@
-[gd_scene load_steps=27 format=3 uid="uid://ou8kxk0vt70c"]
+[gd_scene load_steps=28 format=3 uid="uid://ou8kxk0vt70c"]
 
+[ext_resource type="Script" path="res://scenes/game_objects/player/player.gd" id="1_ben2c"]
 [ext_resource type="Texture2D" uid="uid://b8tce7orhqcdv" path="res://assets/characters/player/walk_down/tile000.png" id="1_qr24q"]
 [ext_resource type="Texture2D" uid="uid://b8duijs2apwdt" path="res://assets/characters/player/walk_down/tile001.png" id="2_b2vql"]
 [ext_resource type="Texture2D" uid="uid://c1cxb5uf00mj8" path="res://assets/characters/player/walk_down/tile002.png" id="3_a25xo"]
@@ -126,6 +127,8 @@ animations = [{
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_po0d4"]
 
 [node name="Player" type="CharacterBody2D"]
+scale = Vector2(1.5, 1.5)
+script = ExtResource("1_ben2c")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_f6up6")

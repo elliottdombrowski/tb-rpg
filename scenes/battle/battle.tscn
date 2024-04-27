@@ -1,9 +1,9 @@
-[gd_scene load_steps=18 format=3 uid="uid://cxwhbpsixv6lj"]
+[gd_scene load_steps=20 format=3 uid="uid://cxwhbpsixv6lj"]
 
 [ext_resource type="Texture2D" uid="uid://bvqn8c7smrwkx" path="res://assets/backgrounds/battleback1.png" id="1_sfa1b"]
 [ext_resource type="Script" path="res://scenes/battle/battle.gd" id="1_xsq6h"]
 [ext_resource type="Texture2D" uid="uid://hegm0h0qjnxl" path="res://assets/characters/enemies/battle/07b.png" id="2_0451p"]
-[ext_resource type="Resource" uid="uid://neodjrle8b6x" path="res://resources/dragon.tres" id="2_ftwma"]
+[ext_resource type="Resource" uid="uid://neodjrle8b6x" path="res://resources/knight.tres" id="2_ekmy7"]
 [ext_resource type="FontFile" uid="uid://654wi25h7d5f" path="res://assets/fonts/NESCyrillic.ttf" id="2_q1436"]
 [ext_resource type="PackedScene" uid="uid://b6qucaybngnak" path="res://scenes/game_objects/cameras/battle_camera/battle_camera.tscn" id="3_5gpi6"]
 [ext_resource type="FontFile" uid="uid://di8e0q2uvkj8c" path="res://assets/fonts/Adventurer.ttf" id="4_af355"]
@@ -79,10 +79,22 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("BattleCamera:position")
+tracks/1/path = NodePath("EnemyContainer:modulate")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("BattleCamera:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
@@ -104,11 +116,43 @@ tracks/0/keys = {
 "values": [Vector2(0, 0), Vector2(-2, -2), Vector2(6, 1), Vector2(1, 7), Vector2(7, 5), Vector2(3, 9), Vector2(10, 10), Vector2(4, 13), Vector2(0, 0)]
 }
 
+[sub_resource type="Animation" id="Animation_totcl"]
+resource_name = "player_damaged_defending"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("BattleCamera:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(-1, -1), Vector2(2, 1), Vector2(1, 3), Vector2(4, 3), Vector2(1, 4), Vector2(3, 4), Vector2(2, 4), Vector2(0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_mwrfx"]
+resource_name = "enemy_defeated"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("EnemyContainer:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_hcfq8"]
 _data = {
 "RESET": SubResource("Animation_wghfu"),
 "enemy_damaged": SubResource("Animation_ttn58"),
-"player_damaged": SubResource("Animation_h6oed")
+"enemy_defeated": SubResource("Animation_mwrfx"),
+"player_damaged": SubResource("Animation_h6oed"),
+"player_damaged_defending": SubResource("Animation_totcl")
 }
 
 [node name="Battle" type="Control"]
@@ -119,9 +163,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_xsq6h")
-enemy = ExtResource("2_ftwma")
-
-[node name="BattleCamera" parent="." instance=ExtResource("3_5gpi6")]
+enemy = ExtResource("2_ekmy7")
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
@@ -131,6 +173,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("1_sfa1b")
+
+[node name="BattleCamera" parent="." instance=ExtResource("3_5gpi6")]
 
 [node name="EnemyContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -334,4 +378,5 @@ libraries = {
 }
 
 [connection signal="pressed" from="ActionsPanel/Actions/Attack" to="." method="_on_attack_pressed"]
+[connection signal="pressed" from="ActionsPanel/Actions/Defend" to="." method="_on_defend_pressed"]
 [connection signal="pressed" from="ActionsPanel/Actions/Run" to="." method="_on_run_pressed"]

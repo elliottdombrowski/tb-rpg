@@ -14,18 +14,19 @@ signal textbox_closed
 @export_range(0,1) var run_chance : float = 0.5
 @export            var enemy      : Resource = null
 
-var current_player_health = 0
-var current_enemy_health  = 0
+var current_player_health : int  = 0
+var current_enemy_health  : int  = 0
+var is_defending          : bool = false
 
 
 func _ready():
-	set_health(player_health_bar, PlayerStats.current_health, PlayerStats.max_health)
-	set_health(enemy_health_bar, enemy.health, enemy.health)
+	set_health(player_health_bar, PlayerStats.current_health_points, PlayerStats.max_health_points)
+	set_health(enemy_health_bar, enemy.health_points, enemy.health_points)
 	enemy_texture.texture = enemy.texture
 	
 	# Initialize health values
-	current_player_health = PlayerStats.current_health
-	current_enemy_health  = enemy.health
+	current_player_health = PlayerStats.current_health_points
+	current_enemy_health  = enemy.health_points
 	
 	textbox.hide()
 	actions_panel.hide()
@@ -45,18 +46,30 @@ func set_health(progress_bar: ProgressBar, health, max_health):
 func enemy_turn():
 	display_text("%s launches at you!" % enemy.name)
 	await textbox_closed
-	display_text("%s did %d damage!" % [enemy.name, enemy.damage])
-	await textbox_closed
 	
-	# Make sure to never let health drop below 0
-	current_player_health = max(0, current_player_health - enemy.damage)
-	set_health(player_health_bar, current_player_health, PlayerStats.max_health)
+	if is_defending:
+		is_defending = false
+		animation.play("player_damaged_defending")
+		await animation.animation_finished
+		
+		display_text("You defended successfully!")
+		await textbox_closed
+	else:
+		display_text("%s did %d damage!" % [enemy.name, enemy.attack_damage])
+		await textbox_closed
+		
+		# Make sure to never let health drop below 0
+		current_player_health = max(0, current_player_health - enemy.attack_damage)
+		set_health(player_health_bar, current_player_health, PlayerStats.max_health_points)
+		
+		animation.play("player_damaged")
+		await animation.animation_finished
 	
-	animation.play("player_damaged")
-	await animation.animation_finished
+	actions_panel.show()
 
 
 func display_text(text):
+	actions_panel.hide()
 	textbox.show()
 	textbox_label.text = text
 
@@ -70,15 +83,33 @@ func _input(event):
 func _on_attack_pressed():
 	display_text("You swing your sword!")
 	await textbox_closed
-	display_text("You dealt %d damage!" % PlayerStats.damage)
+	display_text("You dealt %d damage!" % PlayerStats.attack_damage)
 	await textbox_closed
 	
 	# Make sure to never let health drop below 0
-	current_enemy_health = max(0, current_enemy_health - PlayerStats.damage)
-	set_health(enemy_health_bar, current_enemy_health, enemy.health)
+	current_enemy_health = max(0, current_enemy_health - PlayerStats.attack_damage)
+	set_health(enemy_health_bar, current_enemy_health, enemy.health_points)
 	
 	animation.play("enemy_damaged")
 	await animation.animation_finished
+	
+	# Check if enemy is dead
+	if current_enemy_health == 0:
+		display_text("%s was defeated!" % enemy.name)
+		await textbox_closed
+		animation.play("enemy_defeated")
+		await animation.animation_finished
+		await get_tree().create_timer(.25).timeout
+		return
+	
+	enemy_turn()
+
+
+func _on_defend_pressed():
+	is_defending = true
+	display_text("You prepare defensively!")
+	await textbox_closed
+	await get_tree().create_timer(.25).timeout
 	enemy_turn()
 
 
@@ -91,5 +122,3 @@ func _on_run_pressed():
 	await textbox_closed
 	await get_tree().create_timer(.25).timeout
 	get_tree().quit()
-
-

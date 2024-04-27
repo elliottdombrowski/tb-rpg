@@ -22,3 +22,15 @@ var attack_speed             : float         = 0.0
 var crit_chance              : float         = 0.1
 var dodge_chance             : float         = 0.1
 var defense                  : int           = 30
+
+# Magic stuff
+var spells : Array[Dictionary] = [
+	{
+		"spell_name"      : "FireI",
+		"spell_type"      : "FIRE",
+		"spell_level"     : 1,
+		"spell_max_level" : 3,
+		"spell_damage"    : 40,
+		"spell_mp_cost"   : 5,
+	}
+]

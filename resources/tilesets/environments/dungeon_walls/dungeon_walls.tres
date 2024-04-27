@@ -1,0 +1,71 @@
+[gd_resource type="TileSet" load_steps=3 format=3 uid="uid://c2ffokcgqnfx1"]
+
+[ext_resource type="Texture2D" uid="uid://sdmtw5nj80s2" path="res://assets/environments/dungeon_floor/fantasy_dungeon_tileset.png" id="1_hemwb"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ng5r5"]
+texture = ExtResource("1_hemwb")
+texture_region_size = Vector2i(32, 32)
+1:4/0 = 0
+1:4/0/terrain_set = 0
+1:4/0/probability = 30.0
+2:4/0 = 0
+2:4/0/terrain_set = 0
+2:4/0/probability = 30.0
+3:4/0 = 0
+3:4/0/terrain_set = 0
+3:4/0/probability = 30.0
+1:5/0 = 0
+1:5/0/terrain_set = 0
+2:5/0 = 0
+2:5/0/terrain_set = 0
+3:5/0 = 0
+3:5/0/terrain_set = 0
+1:8/0 = 0
+1:8/0/terrain_set = 0
+2:8/0 = 0
+2:8/0/terrain_set = 0
+3:8/0 = 0
+3:8/0/terrain_set = 0
+3:7/0 = 0
+3:7/0/terrain_set = 0
+2:7/0 = 0
+2:7/0/terrain_set = 0
+1:7/0 = 0
+1:7/0/terrain_set = 0
+1:6/0 = 0
+1:6/0/terrain_set = 0
+2:6/0 = 0
+2:6/0/terrain_set = 0
+3:6/0 = 0
+3:6/0/terrain_set = 0
+4:1/0 = 0
+4:1/0/terrain_set = 0
+0:1/0 = 0
+0:1/0/terrain_set = 0
+1:0/0 = 0
+1:0/0/terrain_set = 0
+2:0/0 = 0
+2:0/0/terrain_set = 0
+3:0/0 = 0
+3:0/0/terrain_set = 0
+1:3/0 = 0
+1:3/0/terrain_set = 0
+2:3/0 = 0
+2:3/0/terrain_set = 0
+3:3/0 = 0
+3:3/0/terrain_set = 0
+2:2/0 = 0
+2:2/0/terrain_set = 0
+0:2/0 = 0
+1:2/0 = 0
+3:2/0 = 0
+3:1/0 = 0
+1:1/0 = 0
+4:2/0 = 0
+
+[resource]
+tile_size = Vector2i(32, 32)
+terrain_set_0/mode = 0
+terrain_set_0/terrain_0/name = "dungeon_walls"
+terrain_set_0/terrain_0/color = Color(0.28, 0.28, 0.28, 1)
+sources/0 = SubResource("TileSetAtlasSource_ng5r5")

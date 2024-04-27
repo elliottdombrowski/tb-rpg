@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scenes/menus/title/title.gd" id="1_uutc4"]
 [ext_resource type="Texture2D" uid="uid://burmo2qwvbvot" path="res://assets/backgrounds/battleback10.png" id="2_8so0b"]
-[ext_resource type="FontFile" uid="uid://654wi25h7d5f" path="res://assets/fonts/NESCyrillic.ttf" id="3_o8w1t"]
+[ext_resource type="FontFile" uid="uid://lb72qamrx322" path="res://assets/fonts/Montserrat-Medium.ttf" id="3_o8w1t"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0wwon"]
 content_margin_bottom = 4.0

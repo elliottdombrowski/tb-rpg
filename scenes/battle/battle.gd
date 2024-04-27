@@ -45,7 +45,7 @@ func _ready():
 func set_health(progress_bar: ProgressBar, health, max_health):
 	progress_bar.value     = health
 	progress_bar.max_value = max_health
-	progress_bar.get_node("Label").text = "HP: %d/%d" % [health, max_health]
+	progress_bar.get_node("Label").text = "%d/%d" % [health, max_health]
 
 
 func enemy_turn():

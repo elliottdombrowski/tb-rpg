@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://ou8kxk0vt70c"]
+[gd_scene load_steps=30 format=3 uid="uid://ou8kxk0vt70c"]
 
 [ext_resource type="Script" path="res://scenes/game_objects/player/player.gd" id="1_ben2c"]
 [ext_resource type="Texture2D" uid="uid://b8tce7orhqcdv" path="res://assets/characters/player/walk_down/tile000.png" id="1_qr24q"]
@@ -25,6 +25,15 @@
 [ext_resource type="Texture2D" uid="uid://bbeervdh2oxo2" path="res://assets/characters/player/walk_up/tile013.png" id="22_3l0v0"]
 [ext_resource type="Texture2D" uid="uid://yynvv7w86b61" path="res://assets/characters/player/walk_up/tile014.png" id="23_g4ln4"]
 [ext_resource type="Texture2D" uid="uid://bmf0ny07kum8a" path="res://assets/characters/player/walk_up/tile015.png" id="24_lc1ay"]
+
+[sub_resource type="Gradient" id="Gradient_1hio8"]
+offsets = PackedFloat32Array(0, 0.747573)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_hmu6x"]
+gradient = SubResource("Gradient_1hio8")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_f6up6"]
 animations = [{
@@ -132,12 +141,19 @@ collision_layer = 2
 collision_mask = 16
 script = ExtResource("1_ben2c")
 
+[node name="PointLight2D" type="PointLight2D" parent="."]
+position = Vector2(0, 16)
+scale = Vector2(2, 2)
+texture = SubResource("GradientTexture2D_hmu6x")
+offset = Vector2(0, -15)
+
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_f6up6")
 animation = &"idle"
 offset = Vector2(0, -15)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
 position = Vector2(0, -16)
 scale = Vector2(0.805, -1.005)
 shape = SubResource("CapsuleShape2D_po0d4")

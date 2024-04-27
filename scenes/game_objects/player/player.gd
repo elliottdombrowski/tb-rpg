@@ -9,7 +9,6 @@ const ACCELERATION_SMOOTHING = 25
 func _ready():
 	pass
 
-
 func _process(delta):
 	var movement_vector = get_movement_vector()
 	var direction       = movement_vector.normalized()

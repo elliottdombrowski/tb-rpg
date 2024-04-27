@@ -5,12 +5,12 @@
 
 [resource]
 script = ExtResource("1_7ru60")
-name = "Knight"
+entity_name = "Knight"
 texture = ExtResource("2_cflyo")
 health_points = 250
 magic_points = 10
 attack_damage = 25
 attack_speed = 0.0
-crit_chance = 0.5
-dodge_chance = 0.5
+crit_chance = 0.1
+dodge_chance = 0.1
 defense = 30

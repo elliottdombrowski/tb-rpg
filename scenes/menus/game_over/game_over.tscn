@@ -32,14 +32,22 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 1
 text = "Game Over"
+horizontal_alignment = 1
 
 [node name="Retry" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Retry"
 
-[node name="Quit" type="Button" parent="VBoxContainer"]
+[node name="QuitToTitle" type="Button" parent="VBoxContainer"]
 layout_mode = 2
-text = "Quit"
+text = "Quit to Title
+"
+
+[node name="QuitGame" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Quit Game
+"
 
 [connection signal="pressed" from="VBoxContainer/Retry" to="." method="_on_retry_pressed"]
-[connection signal="pressed" from="VBoxContainer/Quit" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="VBoxContainer/QuitToTitle" to="." method="_on_quit_to_title_pressed"]
+[connection signal="pressed" from="VBoxContainer/QuitGame" to="." method="_on_quit_game_pressed"]

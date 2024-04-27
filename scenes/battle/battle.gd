@@ -160,7 +160,9 @@ func _on_attack_pressed():
 		await textbox_closed
 		animation.play("enemy_defeated")
 		await animation.animation_finished
-		await get_tree().create_timer(.25).timeout
+		display_text("You gained %d experience points." % enemy.experience_dropped)
+		await textbox_closed
+		get_tree().change_scene_to_file("res://scenes/menus/title/title.tscn")
 		return
 	
 	enemy_turn()
@@ -182,4 +184,4 @@ func _on_run_pressed():
 	display_text("Got away safely!")
 	await textbox_closed
 	await get_tree().create_timer(.25).timeout
-	get_tree().quit()
+	get_tree().change_scene_to_file("res://scenes/menus/title/title.tscn")

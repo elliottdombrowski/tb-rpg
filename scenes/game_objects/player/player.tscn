@@ -27,11 +27,13 @@
 [ext_resource type="Texture2D" uid="uid://bmf0ny07kum8a" path="res://assets/characters/player/walk_up/tile015.png" id="24_lc1ay"]
 
 [sub_resource type="Gradient" id="Gradient_1hio8"]
-offsets = PackedFloat32Array(0, 0.747573)
-colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+offsets = PackedFloat32Array(0.116883, 0.483766, 0.720779)
+colors = PackedColorArray(1, 1, 1, 1, 0.478049, 0.478049, 0.478049, 0.478049, 0, 0, 0, 0)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_hmu6x"]
 gradient = SubResource("Gradient_1hio8")
+width = 48
+height = 48
 fill = 1
 fill_from = Vector2(0.5, 0.5)
 
@@ -144,6 +146,7 @@ script = ExtResource("1_ben2c")
 [node name="PointLight2D" type="PointLight2D" parent="."]
 position = Vector2(0, 16)
 scale = Vector2(2, 2)
+range_z_max = 99
 texture = SubResource("GradientTexture2D_hmu6x")
 offset = Vector2(0, -15)
 

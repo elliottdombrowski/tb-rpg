@@ -1,10 +1,13 @@
 extends Camera2D
 
+const ZOOM_RATE : float = 2.5
+
 var target_position = Vector2.ZERO
 
 
 func _ready():
 	make_current() # Make camera -> current_camera
+	zoom = Vector2(ZOOM_RATE, ZOOM_RATE)
 
 
 func _process(delta):

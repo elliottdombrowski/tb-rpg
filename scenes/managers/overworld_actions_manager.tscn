@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://bf48yc0kgwiyx"]
+
+[ext_resource type="Script" path="res://scenes/managers/overworld_actions_manager.gd" id="1_sfyby"]
+[ext_resource type="PackedScene" uid="uid://hy4gackq0uhs" path="res://scenes/effects/abilities/flash.tscn" id="2_qtgyj"]
+
+[node name="OverworldActionsManager" type="Node" groups=["ability"]]
+script = ExtResource("1_sfyby")
+flash_ability = ExtResource("2_qtgyj")

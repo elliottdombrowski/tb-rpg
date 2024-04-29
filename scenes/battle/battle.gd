@@ -2,7 +2,8 @@ extends Control
 
 signal textbox_closed
 
-@onready var actions_panel        : Panel           = $ActionsPanel
+# @onready var actions_panel        : Panel           = $ActionsPanel
+@onready var actions_panel        : HBoxContainer   = $PlayerPanel/ActionsPanel
 @onready var textbox              : Panel           = $Textbox
 @onready var textbox_label        : Label           = $Textbox/Label
 @onready var textbox_ticker       : Label           = $Textbox/Ticker
@@ -34,12 +35,12 @@ func _ready():
 	current_enemy_health  = enemy.health_points
 	
 	textbox.hide()
-	actions_panel.hide()
+	toggle_player_ui(true)
 	
 	display_text("A wild %s appears!" % enemy.entity_name.to_upper())
 	
 	await textbox_closed
-	actions_panel.show()
+	toggle_player_ui(false)
 
 
 func set_health(progress_bar: ProgressBar, health, max_health):
@@ -62,7 +63,7 @@ func enemy_turn():
 	)
 	
 	if damage_dealt == 0: 
-		actions_panel.show()
+		toggle_player_ui(false)
 		return # If player dodged
 	
 	if is_defending:
@@ -82,10 +83,10 @@ func enemy_turn():
 		await textbox_closed
 		get_tree().change_scene_to_file("res://scenes/menus/game_over/game_over.tscn")
 	else:
-		actions_panel.show()
+		toggle_player_ui(false)
 
 func display_text(text):
-	actions_panel.hide()
+	toggle_player_ui(true)
 	textbox.show()
 	textbox_label.text = text
 
@@ -124,7 +125,7 @@ func handle_attack(
 	return round(damage_dealt)
 
 
-func _input(event):
+func _input(_event):
 	if (Input.is_action_just_pressed("ui_accept") or Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)) and textbox.visible:
 		textbox.hide()
 		textbox_closed.emit()
@@ -185,3 +186,13 @@ func _on_run_pressed():
 	await textbox_closed
 	await get_tree().create_timer(.25).timeout
 	get_tree().change_scene_to_file("res://scenes/menus/title/title.tscn")
+
+
+func _on_running_pressed():
+	pass # Replace with function body.
+
+
+func toggle_player_ui(val: bool):
+		var buttons = get_tree().get_nodes_in_group("player_battle_action_buttons")
+		for button in buttons:
+			button.disabled = val

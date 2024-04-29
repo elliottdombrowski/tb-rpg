@@ -9,7 +9,7 @@ func _ready():
 	pass # Replace with function body.
 
 
-func _process(delta):
+func _process(_delta):
 	if can_use_ability and Input.is_action_just_pressed("flash"):
 		can_use_ability = false
 		# TODO - can this be done more efficiently?

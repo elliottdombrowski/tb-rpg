@@ -7,7 +7,7 @@ signal textbox_closed
 @onready var textbox              : Panel           = $Textbox
 @onready var textbox_label        : Label           = $Textbox/Label
 @onready var textbox_ticker       : Label           = $Textbox/Ticker
-@onready var player_health_bar    : ProgressBar     = $PlayerPanel/PlayerData/ProgressBar
+@onready var player_health_bar    : ProgressBar     = $PartyPanel/HBoxContainer/PlayerPanel/PlayerData/ProgressBar
 @onready var enemy_texture        : TextureRect     = $EnemyContainer/Enemy
 @onready var enemy_health_bar     : ProgressBar     = $EnemyContainer/ProgressBar
 @onready var animation            : AnimationPlayer = $AnimationPlayer

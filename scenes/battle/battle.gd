@@ -128,21 +128,7 @@ func _input(_event):
 func _on_attack_pressed():
 	display_text("You swing your sword!")
 	await textbox_closed
-	
-# 	var damage_dealt = await handle_attack(
-# 		PlayerStats.entity_name,
-# 		enemy.entity_name,
-# 		PlayerStats.attack_damage,
-# 		PlayerStats.crit_chance,
-# 		enemy.defense,
-# 		enemy.dodge_chance
-# 	)
-# 
-# 	if damage_dealt == 0:
-# 		turn_manager.turn = TurnManager.ENEMY_TURN
-# 		return # If enemy dodged
-	
-	# Make sure to never let health drop below 0
+
 	current_enemy_health = max(0, current_enemy_health - PlayerStats.attack_damage)
 	set_health(enemy_health_bar, current_enemy_health, enemy.health_points)
 	
@@ -182,15 +168,12 @@ func _on_run_pressed():
 	get_tree().change_scene_to_file("res://scenes/menus/title/title.tscn")
 
 
-func _on_running_pressed():
-	pass # Replace with function body.
-
-
 func _on_ally_turn_started():
-	print_debug("ALLY TURN")
 	actions_panel.show()
 
 func _on_enemy_turn_started():
+	actions_panel.hide()
+
 	display_text("%s launches at you!" % enemy.entity_name)
 	await textbox_closed
 

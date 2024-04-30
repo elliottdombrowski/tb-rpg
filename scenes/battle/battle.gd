@@ -7,11 +7,13 @@ signal attack_feedback_closed
 @onready var textbox                : Panel           = $Textbox
 @onready var textbox_label          : Label           = $Textbox/Label
 @onready var textbox_ticker         : Label           = $Textbox/Ticker
-@onready var attack_feedback        : VBoxContainer   = $%AttackFeedbackContainer
 @onready var player_health_bar      : ProgressBar     = $PartyPanel/HBoxContainer/PlayerPanel/PlayerData/HealthBar
 @onready var enemy_texture          : TextureRect     = $EnemyContainer/Enemy
 @onready var enemy_health_bar       : ProgressBar     = $EnemyContainer/HealthBar
 @onready var animation              : AnimationPlayer = $AnimationPlayer
+
+# Feedback vars
+@onready var enemy_feedback_damage  : Label           = $EnemyFeedbackPanel/DamageLabel
 
 @export_range(0,1) var run_chance   : float           = 0.5
 @export            var enemy        : Resource        = null
@@ -61,26 +63,8 @@ func display_text(text):
 	textbox_label.text = text
 
 
-func display_feedback(_critical_hit, _defending, damage):
-	actions_panel.hide()
-	var feedback_label = Label.new()
-
-	# if critical_hit:
-	# 	attack_feedback.add_child(feedback_label)
-	# 	feedback_label.text = "CRIT!"
-	# 	await get_tree().create_timer(1).timeout
-	# 	feedback_label.queue_free()
-	# if defending:
-	# 	attack_feedback.add_child(feedback_label)
-	# 	feedback_label.text = "DODGED"
-	# 	await get_tree().create_timer(1).timeout
-	# 	feedback_label.queue_free()
-	attack_feedback.add_child(feedback_label)
-	feedback_label.text = "%d" % damage
-	await get_tree().create_timer(1).timeout
-	feedback_label.queue_free()
-
-	attack_feedback_closed.emit()
+func display_feedback():
+	pass
 
 
 # func handle_attack(
@@ -131,7 +115,8 @@ func _on_attack_pressed():
 
 	current_enemy_health = max(0, current_enemy_health - PlayerStats.attack_damage)
 	set_health(enemy_health_bar, current_enemy_health, enemy.health_points)
-	
+
+	enemy_feedback_damage.text = "%d" % PlayerStats.attack_damage
 	animation.play("enemy_damaged")
 	await animation.animation_finished
 	
@@ -181,6 +166,9 @@ func _on_enemy_turn_started():
 	current_player_health = max(0, current_player_health - enemy.attack_damage)
 	set_health(player_health_bar, current_player_health, PlayerStats.max_health_points)
 
+	animation.play("player_damaged")
+	await animation.animation_finished
+	
 	display_text("%s did %d damage!" % [enemy.entity_name, enemy.attack_damage])
 	await textbox_closed
 

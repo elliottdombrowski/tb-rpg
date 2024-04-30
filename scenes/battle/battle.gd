@@ -3,10 +3,6 @@ extends Control
 signal textbox_closed
 signal attack_feedback_closed
 
-# var turn_manager = preload("TurnManager")
-# var turn_manager = load("res://resources/turn_manager.tres")
-# var turn_manager = TurnManager
-
 @onready var actions_panel          : Panel           = $ActionsPanel
 @onready var textbox                : Panel           = $Textbox
 @onready var textbox_label          : Label           = $Textbox/Label
@@ -49,13 +45,8 @@ func _ready():
 	actions_panel.hide()
 	
 	display_text("A wild %s appears!" % enemy.entity_name.to_upper())
-	
 	await textbox_closed
-	actions_panel.show()
-
-
-func _process(_delta):
-	pass
+	turn_manager.turn = TurnManager.ALLY_TURN
 
 
 func set_health(progress_bar: ProgressBar, health, max_health):
@@ -63,43 +54,6 @@ func set_health(progress_bar: ProgressBar, health, max_health):
 	progress_bar.max_value = max_health
 	progress_bar.get_node("Label").text = "%d/%d" % [health, max_health]
 
-
-func enemy_turn():
-	display_text("%s launches at you!" % enemy.entity_name)
-	await textbox_closed
-	
-	var damage_dealt = await handle_attack(
-		enemy.entity_name,
-		PlayerStats.entity_name,
-		enemy.attack_damage,
-		enemy.crit_chance,
-		PlayerStats.defense,
-		PlayerStats.dodge_chance
-	)
-	
-	if damage_dealt == 0: 
-		actions_panel.show()
-		return # If player dodged
-	
-	if is_defending:
-		is_defending = false
-		animation.play("player_damaged")
-		await animation.animation_finished
-	else:
-		animation.play("player_damaged_defending")
-		await animation.animation_finished
-	
-	# Make sure to never let health drop below 0
-	current_player_health = max(0, current_player_health - damage_dealt)
-	set_health(player_health_bar, current_player_health, PlayerStats.max_health_points)
-	
-	if current_player_health == 0:
-		display_text("%s were defeated in battle..." % PlayerStats.entity_name)
-		await textbox_closed
-		get_tree().change_scene_to_file("res://scenes/menus/game_over/game_over.tscn")
-	else:
-		turn_manager.turn = TurnManager.ALLY_TURN
-		actions_panel.show()
 
 func display_text(text):
 	actions_panel.hide()
@@ -129,40 +83,40 @@ func display_feedback(_critical_hit, _defending, damage):
 	attack_feedback_closed.emit()
 
 
-func handle_attack(
-	_attacking_entity_name,
-	defending_entity_name,
-	attacking_entity_attack_damage, 
-	attacking_entity_crit_chance,
-	defending_entity_defense,
-	defending_entity_dodge_chance
-):
-	var is_critical_hit  : bool = Utils.dice_roll(attacking_entity_crit_chance)
-	var is_attack_dodged : bool = Utils.dice_roll(defending_entity_dodge_chance)
-	var damage_dealt     : float  = 0.0
-	
-	# Just break early if the attack is misses.
-	if is_attack_dodged:
-		display_text("but %s rolled out of the way..." % defending_entity_name)
-		await textbox_closed
-		return round(damage_dealt)
-	
-	damage_dealt = attacking_entity_attack_damage
-	if is_critical_hit:
-		damage_dealt = damage_dealt * CRITICAL_HIT_MODIFIER
-		# display_text("%s dealt a critical hit!" % attacking_entity_name)
-		# await textbox_closed
-	if is_defending:
-		damage_dealt = max(0, damage_dealt / defending_entity_defense)
-		# display_text("%s prepares defensively..." % defending_entity_name)
-		# await textbox_closed
-	
-	# display_text("%s did %d damage!" % [attacking_entity_name, round(damage_dealt)])
-	display_feedback(is_critical_hit, is_defending, round(damage_dealt))
-	await attack_feedback_closed
-	# await textbox_closed
-	
-	return round(damage_dealt)
+# func handle_attack(
+# 	_attacking_entity_name,
+# 	defending_entity_name,
+# 	attacking_entity_attack_damage, 
+# 	attacking_entity_crit_chance,
+# 	defending_entity_defense,
+# 	defending_entity_dodge_chance
+# ):
+# 	var is_critical_hit  : bool = Utils.dice_roll(attacking_entity_crit_chance)
+# 	var is_attack_dodged : bool = Utils.dice_roll(defending_entity_dodge_chance)
+# 	var damage_dealt     : float  = 0.0
+# 	
+# 	# Just break early if the attack is misses.
+# 	if is_attack_dodged:
+# 		display_text("but %s rolled out of the way..." % defending_entity_name)
+# 		await textbox_closed
+# 		return round(damage_dealt)
+# 	
+# 	damage_dealt = attacking_entity_attack_damage
+# 	if is_critical_hit:
+# 		damage_dealt = damage_dealt * CRITICAL_HIT_MODIFIER
+# 		# display_text("%s dealt a critical hit!" % attacking_entity_name)
+# 		# await textbox_closed
+# 	if is_defending:
+# 		damage_dealt = max(0, damage_dealt / defending_entity_defense)
+# 		# display_text("%s prepares defensively..." % defending_entity_name)
+# 		# await textbox_closed
+# 	
+# 	# display_text("%s did %d damage!" % [attacking_entity_name, round(damage_dealt)])
+# 	display_feedback(is_critical_hit, is_defending, round(damage_dealt))
+# 	await attack_feedback_closed
+# 	# await textbox_closed
+# 	
+# 	return round(damage_dealt)
 
 
 func _input(_event):
@@ -175,21 +129,21 @@ func _on_attack_pressed():
 	display_text("You swing your sword!")
 	await textbox_closed
 	
-	var damage_dealt = await handle_attack(
-		PlayerStats.entity_name,
-		enemy.entity_name,
-		PlayerStats.attack_damage,
-		PlayerStats.crit_chance,
-		enemy.defense,
-		enemy.dodge_chance
-	)
-
-	if damage_dealt == 0:
-		enemy_turn()
-		return # If enemy dodged
+# 	var damage_dealt = await handle_attack(
+# 		PlayerStats.entity_name,
+# 		enemy.entity_name,
+# 		PlayerStats.attack_damage,
+# 		PlayerStats.crit_chance,
+# 		enemy.defense,
+# 		enemy.dodge_chance
+# 	)
+# 
+# 	if damage_dealt == 0:
+# 		turn_manager.turn = TurnManager.ENEMY_TURN
+# 		return # If enemy dodged
 	
 	# Make sure to never let health drop below 0
-	current_enemy_health = max(0, current_enemy_health - damage_dealt)
+	current_enemy_health = max(0, current_enemy_health - PlayerStats.attack_damage)
 	set_health(enemy_health_bar, current_enemy_health, enemy.health_points)
 	
 	animation.play("enemy_damaged")
@@ -203,11 +157,9 @@ func _on_attack_pressed():
 		await animation.animation_finished
 		display_text("You gained %d experience points." % enemy.experience_dropped)
 		await textbox_closed
-		get_tree().change_scene_to_file("res://scenes/menus/title/title.tscn")
-		return
+		return get_tree().change_scene_to_file("res://scenes/menus/title/title.tscn")
 	
 	turn_manager.turn = TurnManager.ENEMY_TURN
-	enemy_turn()
 
 
 func _on_defend_pressed():
@@ -216,14 +168,12 @@ func _on_defend_pressed():
 	await textbox_closed
 	await get_tree().create_timer(.25).timeout
 	turn_manager.turn = TurnManager.ENEMY_TURN
-	enemy_turn()
 
 
 func _on_run_pressed():
 	if Utils.dice_roll(run_chance):
 		display_text("Failed to run away!")
 		turn_manager.turn = TurnManager.ENEMY_TURN
-		enemy_turn()
 		return
 
 	display_text("Got away safely!")
@@ -237,8 +187,20 @@ func _on_running_pressed():
 
 
 func _on_ally_turn_started():
-	print_debug("ALLY TURN STARTED")
-
+	print_debug("ALLY TURN")
+	actions_panel.show()
 
 func _on_enemy_turn_started():
-	print_debug("ENEMY TURN STARTED")
+	display_text("%s launches at you!" % enemy.entity_name)
+	await textbox_closed
+
+	# Make sure to never let health drop below 0
+	current_player_health = max(0, current_player_health - enemy.attack_damage)
+	set_health(player_health_bar, current_player_health, PlayerStats.max_health_points)
+
+	display_text("%s did %d damage!" % [enemy.entity_name, enemy.attack_damage])
+	await textbox_closed
+
+	turn_manager.turn = TurnManager.ALLY_TURN
+	# Pseudocode moving enemy into its own game_object
+	# enemy.attack()

@@ -1,15 +1,17 @@
 extends Control
 
 signal textbox_closed
+signal attack_feedback_closed
 
-# @onready var actions_panel        : Panel           = $ActionsPanel
-@onready var actions_panel        : HBoxContainer   = $PlayerPanel/ActionsPanel
+@onready var actions_panel        : Panel           = $ActionsPanel
 @onready var textbox              : Panel           = $Textbox
 @onready var textbox_label        : Label           = $Textbox/Label
 @onready var textbox_ticker       : Label           = $Textbox/Ticker
-@onready var player_health_bar    : ProgressBar     = $PartyPanel/HBoxContainer/PlayerPanel/PlayerData/ProgressBar
+@onready var attack_feedback      : VBoxContainer   = $%AttackFeedbackContainer
+@onready var player_health_bar    : ProgressBar     = $PartyPanel/HBoxContainer/PlayerPanel/PlayerData/HealthBar
+@onready var player_atb_bar       : ProgressBar     = $PartyPanel/HBoxContainer/PlayerPanel/PlayerData/ATB
 @onready var enemy_texture        : TextureRect     = $EnemyContainer/Enemy
-@onready var enemy_health_bar     : ProgressBar     = $EnemyContainer/ProgressBar
+@onready var enemy_health_bar     : ProgressBar     = $EnemyContainer/HealthBar
 @onready var animation            : AnimationPlayer = $AnimationPlayer
 
 @export_range(0,1) var run_chance : float           = 0.5
@@ -34,13 +36,23 @@ func _ready():
 	current_player_health = PlayerStats.current_health_points
 	current_enemy_health  = enemy.health_points
 	
+	# Initialize ATB values
+	# TODO - Make this Timer countdown based
+	player_atb_bar.value     = 0
+	player_atb_bar.max_value = 1
+	player_atb_bar.step      = 0.001
+	
 	textbox.hide()
-	toggle_player_ui(true)
+	actions_panel.hide()
 	
 	display_text("A wild %s appears!" % enemy.entity_name.to_upper())
 	
 	await textbox_closed
-	toggle_player_ui(false)
+	actions_panel.show()
+
+
+func _process(_delta):
+	player_atb_bar.value = (player_atb_bar.value + PlayerStats.attack_speed)
 
 
 func set_health(progress_bar: ProgressBar, health, max_health):
@@ -63,7 +75,7 @@ func enemy_turn():
 	)
 	
 	if damage_dealt == 0: 
-		toggle_player_ui(false)
+		actions_panel.show()
 		return # If player dodged
 	
 	if is_defending:
@@ -83,12 +95,22 @@ func enemy_turn():
 		await textbox_closed
 		get_tree().change_scene_to_file("res://scenes/menus/game_over/game_over.tscn")
 	else:
-		toggle_player_ui(false)
+		actions_panel.show()
 
 func display_text(text):
-	toggle_player_ui(true)
+	actions_panel.hide()
 	textbox.show()
 	textbox_label.text = text
+
+
+func display_feedback(text):
+	actions_panel.hide()
+	var feedback_label = Label.new()
+	attack_feedback.add_child(feedback_label)
+	feedback_label.text = text
+	await get_tree().create_timer(1).timeout
+	feedback_label.queue_free()
+	attack_feedback_closed.emit()
 
 
 func handle_attack(
@@ -191,8 +213,3 @@ func _on_run_pressed():
 func _on_running_pressed():
 	pass # Replace with function body.
 
-
-func toggle_player_ui(val: bool):
-		var buttons = get_tree().get_nodes_in_group("player_battle_action_buttons")
-		for button in buttons:
-			button.disabled = val

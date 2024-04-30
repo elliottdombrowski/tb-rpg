@@ -5,3 +5,4 @@
 [node name="Main" type="Node"]
 
 [node name="Battle" parent="." instance=ExtResource("1_nl21x")]
+run_chance = null

@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3 uid="uid://d3msi7f3wghbg"]
+
+[ext_resource type="Script" path="res://scenes/game_objects/enemies/knight/knight.gd" id="1_uiuhk"]
+[ext_resource type="Resource" uid="uid://neodjrle8b6x" path="res://resources/knight.tres" id="2_yxbfl"]
+[ext_resource type="Texture2D" uid="uid://hegm0h0qjnxl" path="res://assets/characters/enemies/battle/07b.png" id="3_tockd"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ggv33"]
+
+[node name="Knight" type="CharacterBody2D" groups=["overworld_enemy"]]
+scale = Vector2(0.5, 0.5)
+collision_layer = 4
+collision_mask = 17
+script = ExtResource("1_uiuhk")
+enemy = ExtResource("2_yxbfl")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("3_tockd")
+offset = Vector2(2.08165e-12, -60)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(2.08165e-12, -55)
+scale = Vector2(3, 3.9)
+shape = SubResource("CapsuleShape2D_ggv33")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]

@@ -1,6 +1,6 @@
 extends Camera2D
 
-const ZOOM_RATE : float = 2.5
+const ZOOM_RATE : float = .7
 
 var target_position = Vector2.ZERO
 

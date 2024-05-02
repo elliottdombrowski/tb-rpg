@@ -1,0 +1,59 @@
+[gd_scene load_steps=8 format=3 uid="uid://bgm024alqm5gw"]
+
+[ext_resource type="FontFile" uid="uid://lb72qamrx322" path="res://assets/fonts/Montserrat-Medium.ttf" id="1_2ncmq"]
+[ext_resource type="Script" path="res://scenes/battle/enemy/enemy_container.gd" id="1_egdkf"]
+[ext_resource type="Resource" uid="uid://neodjrle8b6x" path="res://resources/knight.tres" id="2_b4lly"]
+[ext_resource type="Texture2D" uid="uid://hegm0h0qjnxl" path="res://assets/characters/enemies/battle/07b.png" id="2_wunup"]
+[ext_resource type="PackedScene" uid="uid://2onrjn36f04k" path="res://scenes/components/health_component/health_component.tscn" id="3_smgpm"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yb60b"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0, 0, 0.0705882, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y40fo"]
+bg_color = Color(1, 1, 1, 1)
+
+[node name="EnemyContainer" type="VBoxContainer" groups=["enemy"]]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_egdkf")
+enemy = ExtResource("2_b4lly")
+
+[node name="HealthComponent" parent="." instance=ExtResource("3_smgpm")]
+
+[node name="HealthBar" type="ProgressBar" parent="."]
+custom_minimum_size = Vector2(200, 20)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_yb60b")
+theme_override_styles/fill = SubResource("StyleBoxFlat_y40fo")
+max_value = 1000.0
+step = 1.0
+show_percentage = false
+
+[node name="Label" type="Label" parent="HealthBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -1.0
+offset_bottom = -1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("1_2ncmq")
+text = "HP: 25/50"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Enemy" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+size_flags_horizontal = 4
+texture = ExtResource("2_wunup")

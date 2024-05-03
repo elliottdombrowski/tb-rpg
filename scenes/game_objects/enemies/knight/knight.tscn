@@ -1,10 +1,13 @@
-[gd_scene load_steps=5 format=3 uid="uid://d3msi7f3wghbg"]
+[gd_scene load_steps=7 format=3 uid="uid://d3msi7f3wghbg"]
 
 [ext_resource type="Script" path="res://scenes/game_objects/enemies/knight/knight.gd" id="1_uiuhk"]
 [ext_resource type="Resource" uid="uid://neodjrle8b6x" path="res://resources/knight.tres" id="2_yxbfl"]
+[ext_resource type="Resource" uid="uid://283yy7grnqcl" path="res://resources/enemy_hunt_manager.tres" id="3_gnk3k"]
 [ext_resource type="Texture2D" uid="uid://hegm0h0qjnxl" path="res://assets/characters/enemies/battle/07b.png" id="3_tockd"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ggv33"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hdu8d"]
 
 [node name="Knight" type="CharacterBody2D" groups=["overworld_enemy"]]
 scale = Vector2(0.5, 0.5)
@@ -12,6 +15,7 @@ collision_layer = 4
 collision_mask = 17
 script = ExtResource("1_uiuhk")
 enemy = ExtResource("2_yxbfl")
+enemy_hunt_manager = ExtResource("3_gnk3k")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("3_tockd")
@@ -21,5 +25,18 @@ offset = Vector2(2.08165e-12, -60)
 position = Vector2(2.08165e-12, -55)
 scale = Vector2(3, 3.9)
 shape = SubResource("CapsuleShape2D_ggv33")
+one_way_collision = true
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+
+[node name="HuntRadius" type="Area2D" parent="."]
+position = Vector2(2.08165e-12, -55)
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HuntRadius"]
+scale = Vector2(15, 15)
+shape = SubResource("CircleShape2D_hdu8d")
+
+[connection signal="area_entered" from="HuntRadius" to="." method="_on_hunt_radius_area_entered"]
+[connection signal="area_exited" from="HuntRadius" to="." method="_on_hunt_radius_area_exited"]

@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://soejdk6alc40"]
+
+[ext_resource type="Texture2D" uid="uid://dj3er8vavjuk3" path="res://assets/environments/interactable/tile000.png" id="2_vqnm3"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bicul"]
+
+[node name="Chest" type="StaticBody2D"]
+collision_layer = 32
+collision_mask = 32
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_vqnm3")
+offset = Vector2(2.08165e-12, -16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(2.08165e-12, -16)
+shape = SubResource("RectangleShape2D_bicul")
+
+[node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="."]
+vertices = PackedVector2Array(-15, -32, 15, -32, 15, 0, -15, 0)

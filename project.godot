@@ -69,6 +69,7 @@ flash={
 2d_physics/layer_4="EnemyCollision"
 2d_physics/layer_5="Walls"
 2d_physics/layer_6="Interactable"
+2d_physics/layer_7="Stairs"
 
 [rendering]
 

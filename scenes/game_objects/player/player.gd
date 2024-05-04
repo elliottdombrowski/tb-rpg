@@ -1,16 +1,22 @@
 extends CharacterBody2D
 
 const MAX_SPEED              = 145
+const MAX_SPEED_CLIMBING     = 100
 const ACCELERATION_SMOOTHING = 25
 
+var is_on_stairs = false
+
 @onready var animation : AnimatedSprite2D = $AnimatedSprite2D
+@export var terrain_manager : Node
 
 
 func _ready():
-	pass
+	if terrain_manager == null: return
+	terrain_manager.on_ground.connect(_on_ground_entered)
+	terrain_manager.on_stairs.connect(_on_stairs_entered)
 
 
-func _process(delta):
+func _process(_delta):
 	var movement_vector = get_movement_vector()
 	var direction       = movement_vector.normalized()
 	
@@ -18,7 +24,7 @@ func _process(delta):
 	#var target_velocity = direction * MAX_SPEED
 	#velocity = velocity.lerp(target_velocity, 1 - exp(-delta * ACCELERATION_SMOOTHING))
 	
-	velocity = direction * MAX_SPEED
+	velocity = direction * (MAX_SPEED_CLIMBING if is_on_stairs else MAX_SPEED)
 	handle_animation(direction)
 	move_and_slide()
 
@@ -45,3 +51,11 @@ func handle_animation(direction: Vector2):
 	else:
 		animation.play("idle")
 		return
+
+
+func _on_ground_entered():
+	is_on_stairs = false
+
+
+func _on_stairs_entered():
+	is_on_stairs = true

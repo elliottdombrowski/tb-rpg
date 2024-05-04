@@ -140,6 +140,8 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_c30b0"]
 
 [node name="Player" type="CharacterBody2D"]
+z_index = 10
+z_as_relative = false
 scale = Vector2(1.5, 1.5)
 collision_layer = 2
 collision_mask = 48
@@ -149,6 +151,9 @@ script = ExtResource("1_ben2c")
 position = Vector2(0, 16)
 scale = Vector2(2, 2)
 range_z_max = 99
+shadow_enabled = true
+shadow_color = Color(0, 0, 0, 1)
+shadow_filter = 2
 texture = SubResource("GradientTexture2D_hmu6x")
 offset = Vector2(0, -15)
 
@@ -163,7 +168,6 @@ scale = Vector2(0.6, 0.6)
 shape = SubResource("CircleShape2D_bwrvi")
 
 [node name="Area2D" type="Area2D" parent="."]
-visible = false
 position = Vector2(2.08165e-12, -16)
 collision_layer = 2
 collision_mask = 0

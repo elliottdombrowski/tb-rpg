@@ -100,8 +100,11 @@ _data = {
 [node name="TorchLightCentered" type="PointLight2D"]
 rotation = -0.785398
 energy = 3.0
+shadow_enabled = true
+shadow_color = Color(0, 0, 0, 1)
+shadow_filter = 2
 texture = SubResource("GradientTexture2D_faead")
-offset = Vector2(2.08165e-12, -8)
+offset = Vector2(2.08165e-12, 2.08165e-12)
 
 [node name="LightFlicker" type="AnimationPlayer" parent="."]
 libraries = {

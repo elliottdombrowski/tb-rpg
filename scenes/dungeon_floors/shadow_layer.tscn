@@ -1,0 +1,4 @@
+[gd_scene format=3 uid="uid://knk71xben2sc"]
+
+[node name="ShadowLayer" type="CanvasModulate"]
+color = Color(0.177583, 0.208118, 0.277889, 1)
